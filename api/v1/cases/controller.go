@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/harisaginting/tech-test-adsi/pkg/http/response"
+	"github.com/harisaginting/tech-test-adsi/pkg/utils/helper"
 	"github.com/harisaginting/tech-test-adsi/pkg/tracer"
 )
 
@@ -24,19 +25,29 @@ func (ctrl *Controller) One(c *gin.Context) {
 	defer span.End()
 
 
-	var reqData Payload
+	var req Payload
 	request, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		response.BadRequest(c)
 		return
 	}
-	err = json.Unmarshal(request, &reqData)
+	err = json.Unmarshal(request, &req)
 	if err != nil {
 		response.BadRequest(c)
 		return
 	}
 
-	resData, err := ctrl.service.One(ctx, &reqData)
+	min,max := helper.MinMaxIntSlice(req.Data)
+	if &min == nil || &max == nil {
+		response.BadRequest(c)
+		return
+	}
+	if max >= 1000 || min <= -1000 {
+		response.BadRequest(c)
+		return	
+	}
+
+	resData, err := ctrl.service.One(ctx, &req, min, max)
 	if err != nil {
 		response.Error(c, err.Error())
 		return
