@@ -1,19 +1,18 @@
 package main
 
 import (
-	"context"
-	"net/http"
-	"os/signal"
-	"syscall"
-	"time"
 	"os"
 	"fmt"
+	"time"
+	"context"
+	"syscall"
+	"net/http"
+	"os/signal"
 
-	"github.com/harisaginting/ginting/pkg/tracer"
-	database "github.com/harisaginting/ginting/db"
-	router "github.com/harisaginting/ginting/api"
-	"github.com/harisaginting/ginting/pkg/log"
-	"github.com/harisaginting/ginting/pkg/utils/helper"
+	"github.com/harisaginting/tech-test-adsi/pkg/tracer"
+	router "github.com/harisaginting/tech-test-adsi/api"
+	"github.com/harisaginting/tech-test-adsi/pkg/log"
+	"github.com/harisaginting/tech-test-adsi/pkg/utils/helper"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
@@ -23,11 +22,6 @@ func main() {
 	ctx, stop 	:= signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	tracer.InitTracer()
-
-	// DB CONNECTION
-	db := database.Connection()
-	database.Migration(db)
-
 	port 	:= os.Getenv("PORT")
 	app 	:= gin.New()
 	
@@ -51,7 +45,7 @@ func main() {
 	app.NoRoute(lostInSpce)
 	// API
 	api := app.Group("api")
-	router.RestV1(api, db)
+	router.RestV1(api)
 	
 	// handling server gracefully shutdown
 	srv := &http.Server{

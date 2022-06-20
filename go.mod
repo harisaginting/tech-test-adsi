@@ -1,4 +1,4 @@
-module github.com/harisaginting/ginting
+module github.com/harisaginting/tech-test-adsi
 
 go 1.17
 

@@ -1,33 +1,24 @@
 package api
 
 import (
-	"github.com/harisaginting/ginting/pkg/wire"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-	"github.com/harisaginting/ginting/pkg/utils/helper"
-
-	// middleware
-	kc "github.com/harisaginting/ginting/pkg/keycloak_client"		
+	"github.com/harisaginting/tech-test-adsi/pkg/wire"
 )
 
-func RestV1(r *gin.RouterGroup, db *gorm.DB) {
+func RestV1(r *gin.RouterGroup) {
 	// Dependency injection
-	apiUser := wire.ApiUser(db)
-
-	cfgkc 	 := helper.ForceInt(helper.MustGetEnv("KEYCLOAK"))
-	keycloak := kc.Start(cfgkc)
+	apiCase := wire.ApiCases()
 
 	// group rest
 	rest := r.Group("rest")
 	{
-		// group v1
+		// versioning,
 		v1 := rest.Group("v1")
 		{
-			// user
-			apiUserGroup := v1.Group("user")
+			// case group
+			apiCaseGroup := v1.Group("case")
 			{
-				apiUserGroup.GET("/", keycloak.Validate([]string{"userservice:dashboard:activity-logs:read"}), apiUser.List)
-				// apiUserGroup.GET("/", keycloak.Validate([]string{"userservice:dashboard:activity-logs:read"}), apiUser.ListGRPC)
+				apiCaseGroup.POST("/one", apiCase.One)
 			}
 		}
 	}

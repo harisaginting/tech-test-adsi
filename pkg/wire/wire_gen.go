@@ -7,15 +7,13 @@
 package wire
 
 import (
-	"github.com/harisaginting/ginting/api/v1/user"
-	"gorm.io/gorm"
+	"github.com/harisaginting/tech-test-adsi/api/v1/cases"
 )
 
 // Injectors from wire.go:
 
-func ApiUser(db *gorm.DB) user.Controller {
-	repository := user.ProviderRepository(db)
-	service := user.ProviderService(repository)
-	controller := user.ProviderController(service)
+func ApiCases() cases.Controller {
+	service := cases.ProviderService()
+	controller := cases.ProviderController(service)
 	return controller
 }

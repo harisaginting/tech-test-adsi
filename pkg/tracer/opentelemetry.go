@@ -1,9 +1,9 @@
 package tracer
 
 import (
-	"log"
 	"context"
-	"github.com/harisaginting/ginting/pkg/utils/helper"
+	"github.com/harisaginting/tech-test-adsi/pkg/log"
+	"github.com/harisaginting/tech-test-adsi/pkg/utils/helper"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -12,7 +12,6 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	oteltrace "go.opentelemetry.io/otel/trace"
-	// stdout "go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 
 )
@@ -30,12 +29,10 @@ func InitTracer() {
 			jaeger.WithAgentPort("6831"),
 		),
 	)
-	log.Println("exporter : ",exp)
 	// stdout
 	// exp, err := stdout.New(stdout.WithPrettyPrint())
 	
 	if err != nil {
-		log.Fatal(err)
 		return
 	}
 	tp := tracesdk.NewTracerProvider(
@@ -46,7 +43,6 @@ func InitTracer() {
 		)),
 	)
 	if err != nil {
-		log.Fatal(err)
 		return
 	}
 	otel.SetTracerProvider(tp)
@@ -55,6 +51,7 @@ func InitTracer() {
 }
 
 func Span(ctx context.Context, name string) oteltrace.Span {
+	log.Trace(ctx,name)
 	_, span = tracer.Start(ctx,name)
 	return span
 }

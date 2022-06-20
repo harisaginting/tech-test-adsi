@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/harisaginting/ginting/pkg/utils/helper"
+	"github.com/harisaginting/tech-test-adsi/pkg/utils/helper"
 )
 
 
@@ -32,4 +32,23 @@ func NoContent(c *gin.Context) {
 
 func Accepted(c *gin.Context) {
 	c.Writer.WriteHeader(http.StatusAccepted)
+}
+
+// 400
+func BadRequest(c *gin.Context) {
+	c.JSON(http.StatusBadRequest, gin.H{
+		"status":        http.StatusBadRequest,
+		"data":          nil,
+		"error_message": "The request is not valid in this context",
+	})
+}
+
+// 500
+func Error(c *gin.Context, err string) {
+	var data interface{}
+	c.JSON(http.StatusInternalServerError, gin.H{
+		"status":        http.StatusOK,
+		"data":          data,
+		"error_message": err,
+	})
 }

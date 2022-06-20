@@ -5,15 +5,13 @@ package wire
 
 import (
 	googleWire "github.com/google/wire"
-	mUser "github.com/harisaginting/ginting/api/v1/user"
-	"gorm.io/gorm"
+	mCase "github.com/harisaginting/tech-test-adsi/api/v1/cases"
 )
 
-func ApiUser(db *gorm.DB) mUser.Controller {
+func ApiCases() mCase.Controller {
 	googleWire.Build(
-		mUser.ProviderController,
-		mUser.ProviderService,
-		mUser.ProviderRepository,
+		mCase.ProviderController,
+		mCase.ProviderService,
 	)
-	return mUser.Controller{}
+	return mCase.Controller{}
 }
