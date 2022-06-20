@@ -1,0 +1,3 @@
+{"level":"info","msg":"SETTLE","time":"2022-04-02T22:39:42+07:00"}
+{"level":"info","msg":"ENV:local","time":"2022-04-02T22:39:42+07:00"}
+{"level":"info","msg":"A walrus appears","spanID":"07bd565d4d82f212","spanParentID":null,"time":"2022-04-02T22:39:45+07:00","traceID":"dc19c926fcb9ba48ae841586acaa99f4"}

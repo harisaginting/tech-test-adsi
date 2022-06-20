@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+
+  #redis
+  credis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - credis:/data
+  
+  # Net Tools
+  nettools:
+    container_name: nettools
+    image: wbitt/network-multitool
+    restart: on-failure
+    command: ["sleep","infinity"]
+    networks: 
+      - karo
+
+  # Jaeger
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one
+    restart: always
+    environment:
+      COLLECTOR_ZIPKIN_HOST_PORT: :9411
+    ports:
+      - 5775:5775/udp
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686
+      - 14250:14250
+      - 14268:14268
+      - 14269:14269
+      - 9411:9411
+    networks: 
+      - karo
+
+ # Collector
+  otel-collector:
+    container_name: otel-collector
+    image: otel/opentelemetry-collector:0.42.0-amd64
+    restart: always
+    command: ["./otel-collector-config.yaml", "${OTELCOL_ARGS}"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "54317:4317"  # OTLP gRPC receiver
+      - ":55679" # zpages extension
+    networks: 
+      - meditap-net
+    depends_on:
+      - jaeger
+      - prometheus
+
+  # Prometheus
+  prometheus:
+    container_name: prometheus
+    restart: always
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks: 
+      - meditap-net
+
+networks:
+  meditap-net:
+    name: meditap-net
+    driver: bridge
+
